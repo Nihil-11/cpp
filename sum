@@ -1,0 +1,18 @@
+
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter the number: ";
+    cin >> n;
+    
+    int summ = (1 + n) / 2 * n;
+    cout << "Sum from 1 to ";
+    cout << n;
+    cout << ": ";
+    cout << summ;
+    
+    return 0;
+}
