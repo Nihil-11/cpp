@@ -8,7 +8,7 @@ int main() {
     cout << "Enter the number: ";
     cin >> n;
     
-    int summ = (1 + n) / 2 * n;
+    int summ = ((1 + n) * n) / 2;
     cout << "Sum from 1 to ";
     cout << n;
     cout << ": ";
