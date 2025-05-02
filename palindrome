@@ -1,0 +1,28 @@
+#include <iostream>
+using namespace std;
+
+
+int main() {
+    int n;
+    int reversed = 0;
+    
+    cout << "Введите число: ";
+    cin >> n;
+    int n_2 = n;
+    
+    while (n > 0) {
+        int digit = n % 10;
+        reversed = reversed*10 + digit;
+        n = n / 10;
+    }
+    
+    if (reversed == n_2) {
+        cout << "Число " << n_2 << " является палиндромом ";
+    }
+    
+    else {
+        cout << "Число " << n_2 << " не является палиндромом ";
+    }
+    
+    return 0;
+}
