@@ -7,7 +7,7 @@ int main() {
     cout << "Enter the number: ";
     cin >> n;
     
-    int summ = ((1 + n) * n) / 2;
+    int summ = ((1 + n) * n) / 2; // Формула суммы арифметической прогрессии с шагом "1" 
     cout << "Sum from 1 to ";
     cout << n;
     cout << ": ";
