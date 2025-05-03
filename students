@@ -1,0 +1,39 @@
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int num_of_st, num_of_gr, grade;
+    float avr, best_avr = 0;
+    string name, best;
+    
+    cout << "Количество студентов: ";
+    cin >> num_of_st;
+    
+    for (int i = 0; i < num_of_st; i++) { // цикл для добавления студента в указанном количестве num_of_st
+        int total = 0; // для каждого нового студента обнуляю суммарную оценку
+        cout << "Имя: ";
+        cin >> name;
+        cout << "Количество оценок: ";
+        cin >> num_of_gr;
+        
+        for (int j = 0; j < num_of_gr; j++) { // цикл для добавления оценок в указанном количестве num_of_gr
+            cout << "Введите оценку: ";
+            cin >> grade;
+            total += grade; 
+            
+        }
+        avr = total/num_of_gr; // высчитывает среднюю оценку для каждого студента, после чего total можно спокойно обнулить, что делается в начале цикла
+        cout << "Средняя оценка студента " << name << ": " << avr << endl;
+        
+        if (avr > best_avr) { // если средняя оценка студента больше средней оценки предыдущего, заменяю значение и сохраняю имя студента
+            best_avr = avr;
+            best = name;
+        }
+        
+    }
+    
+    cout << "Лучшая средняя оценка среди всех студентов: " << best_avr << ", Студент: " << best << endl;
+    
+    return 0;
+}
