@@ -2,81 +2,78 @@
 #include <iostream>
 using namespace std;
 
-int a;
-int b;
+int a, b, choice;
+double result;
+char oper;
+bool run = true;
 
-int sum(int a, int b) {
-    int sum = a + b;
-    
-    return sum;
+void display() { // вывод результата
+    cout << "Result: " << result << endl;
 }
 
-int sub(int a, int b) {
-    int sub = a - b;
-    
-    return sub;
+void calculate() { // выполнение выбранной операции
+    switch (oper) {
+        case '+':
+            result = a + b;
+            display();
+            break;
+        case '-':
+            result = a - b;
+            display();
+            break;
+        case '*':
+            result = a * b;
+            display();
+            break;
+        case '/':
+            if (b == 0) {
+                cout << "Division by 0" << endl;
+            } 
+            else {
+                result = static_cast<double>(a) / b;
+                display();
+            }
+            break;
+        default:
+            cout << "Unknown operation" << endl;
+            run = false;
+            break;
+    }
 }
 
-int mult(int a, int b) {
-    int product = a * b;
-    
-    return product;
-}
-
-int divide(int a, int b) { 
-    float result = a / b;
-    
-    return result;
-}
-
-int menu() {
-    
-    int choice;
-    
-    cout << "-------------------------------" << endl;
-    cout << "1. Sum 1st and 2nd numbers" << endl;
-    cout << "2. Subtract numbers (1st - 2nd)" << endl;
-    cout << "3. Multiply 1st and 2nd numbers" << endl;
-    cout << "4. Divide numbers (1st / 2nd)" << endl;
-    cout << "-------------------------------" << endl;
-    
-    cout << "Choose the option: " ;
-    cin >> choice;
-    
-    if (choice == 1) {
-        cout << "Result: " << sum(a, b);
-        return 0;
-    }
-    
-    if (choice == 2) {
-        cout << "Result: " << sub(a, b);
-        return 0;
-    }
-    
-    if (choice == 3) {
-        cout << "Result: " << mult(a, b);
-        return 0;
-    }
-    
-    if (choice == 4) {
-        cout << "Result: " << divide(a, b);
-        return 0;
-    }
-    else {
-        cout << "Wrong option" << endl;
-        return 0;
-    }
-    return 0;
-}
-
-int main() {
-
+void get() { // получение значений от пользователя
     cout << "Enter the first number: ";
     cin >> a;
     cout << "Enter the second number: ";
     cin >> b;
+    cout << "Enter the operator (+ - * /): ";
+    cin >> oper;
     
-    menu();
+    calculate();
+}
+
+void menu() { // главное меню
+    cout << "----------------" << endl;
+    cout << "1. Calculate" << endl;
+    cout << "2. Exit" << endl;
+    cout << "Choice: ";
+    cin >> choice;
     
+    switch (choice) {
+        case 1:
+            get();
+            break;
+        case 2:
+            run = false; // при run = false основной цикл останавливается (while false)
+            break;
+        default: 
+            cout << "Wrong choice" << endl;
+    }
+}
+
+int main() { // основной цикл
+    while (run) { // по умолчанию run носит true, при желании выйти из программы run приобретает false, что останавливает цикл 
+        menu();
+    }
     return 0;
 }
