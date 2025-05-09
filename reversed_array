@@ -1,0 +1,39 @@
+
+#include <iostream>
+using namespace std;
+
+void create_and_reverse(int n) {
+    int arr[n];
+    int elem;
+    
+    for (int i = 0; i < n; i++) { // добавление n элементов в массив
+        cout << "Введите элемент: ";
+        cin >> elem;
+        arr[i] = elem;
+    }
+    
+    cout << "Ваш массив: ";
+    for (int i = 0; i < n; i++) { // вывод массива
+        cout << arr[i] << " ";
+    }
+    
+    cout << endl;
+    cout << "Развернутый массив: ";
+    for (int i = n - 1; i >= 0; i--) { // вывод массива в обратном порядке
+        cout << arr[i] << " ";
+    }
+}
+
+int main() {
+    int n;
+    cout << "Количество элементов массива: ";
+    cin >> n;
+    
+    if (n <= 0) {
+        cout << "Количество элементов должно быть больше 0";
+    }
+    else {
+        create_and_reverse(n);
+    }
+    return 0;
+}
