@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-int choice, n, number, even = 0, odd = 0;
+int choice, n, even, odd;
 bool run = true;
 
 void get() {
@@ -10,32 +10,22 @@ void get() {
     cin >> n;
 }
 
-void print_even() {
+void print() {
     cout << "Четных чисел: " << even << endl; 
-}
-
-void print_odd() {
     cout << "Нечетных чисел: " << odd << endl;
 }
 
-void count_even() {
-    int arr[n];
+void count(int* arr) {
+    even = 0, odd = 0;
     for (int i = 0; i < n; i++) {
         if (arr[i] % 2 == 0) {
             even += 1;
         }
-    }
-    print_even();
-}
-
-void count_odd() {
-    int arr[n];
-    for (int i = 0; i < n; i++) {
-        if ((arr[i] % 2) > 0) {
+        else if ((arr[i] % 2) != 0) {
             odd += 1;
         }
     }
-    print_odd();
+    print();
 }
 
 void create() {
@@ -43,14 +33,13 @@ void create() {
         cout << "Неверный формат" << endl;
     }
     else {
-        int arr[n];
+        int* arr = new int[n];
         cout << "Введите " << n << " целых чисел: " << endl;
         for (int i = 0; i < n; i++) {
-            cin >> number;
-            arr[i] = number;
+            cin >> arr[i];
         }
-        count_even();
-        count_odd();
+        count(arr);
+        delete [] arr;
     }
 }
 
