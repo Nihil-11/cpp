@@ -2,7 +2,9 @@
 #include <iostream>
 using namespace std;
 
-int CtoF() {
+bool run = true;
+
+void CtoF() {
     float C, F;
     cout << "Введите значение в °C: ";
     cin >> C;
@@ -14,10 +16,9 @@ int CtoF() {
         F = (C * 9/5) + 32;
         cout << C << " °C = " << F << " °F" << endl;
     }
-    return 0;
 }
 
-int FtoC() {
+void FtoC() {
     float C, F;
     cout << "Введите значение в °F: ";
     cin >> F;
@@ -29,10 +30,9 @@ int FtoC() {
         C = (F - 32) * 5/9;
         cout << F << " °F = " << C << " °C" << endl;
     }
-    return 0;
 }
 
-int KtoF() {
+void KtoF() {
     float K, F;
     cout << "Введите значение в °K: ";
     cin >> K;
@@ -44,10 +44,9 @@ int KtoF() {
         F = (K - 273.15) * 9/5 + 32;
         cout << K << " °K = " << F << " °F" << endl;
     }
-    return 0;
 }
 
-int FtoK() {
+void FtoK() {
     float K, F;
     cout << "Введите значение в °F: ";
     cin >> F;
@@ -59,10 +58,9 @@ int FtoK() {
         K = (F - 32) * 5/9 + 273.15;
         cout << F << " °F = " << K << " °K" << endl;
     }
-    return 0;
 }
 
-int CtoK() {
+void CtoK() {
     float C, K;
     cout << "Введите значение в °C: ";
     cin >> C;
@@ -74,10 +72,9 @@ int CtoK() {
         K = C + 273.15;
         cout << C << " °C = " << K << " °K" << endl;
     }
-    return 0;
 }
 
-int KtoC() {
+void KtoC() {
     float C, K;
     cout << "Введите значение в °K: ";
     cin >> K;
@@ -89,12 +86,11 @@ int KtoC() {
         C = K - 273.15;
         cout << K << " °K = " << C << " °C" << endl;
     }
-    return 0;
 }
 
 int main() {
     int choice;
-    while (true) {
+    while (run) {
         cout << "---------------------------------" << endl;
         cout << "----- Конвертер температуры -----" << endl;
         cout << "Перевод: " << endl;
@@ -109,30 +105,32 @@ int main() {
         cout << "Выбор: ";
         cin >> choice;
         
-        if (choice == 1) {
-            CtoK();
-        } 
-        else if (choice == 2) {
-            KtoC();
-        }
-        else if (choice == 3) {
-            CtoF();
-        }
-        else if (choice == 4) {
-            FtoC();
-        }
-        else if (choice == 5) {
-            KtoF();
-        }
-        else if (choice == 6) {
-            FtoK();
-        }
-        else if (choice == 0) {
-            cout << "Выход завершен" << endl;
-            break;
-        }
-        else {
-            cout << "Неверный выбор" << endl;
+        switch (choice) {
+            case 1:
+                CtoK();
+                break;
+            case 2:
+                KtoC();
+                break;
+            case 3:
+                CtoF();
+                break;
+            case 4:
+                FtoC();
+                break;
+            case 5:
+                KtoF();
+                break;
+            case 6:
+                FtoK();
+                break;
+            case 0:
+                cout << "Выход завершен" << endl;
+                run = false;
+                break;
+                
+            default:
+                cout << "Неверный выбор" << endl;
         }
     }
     return 0;
