@@ -1,0 +1,84 @@
+
+#include <iostream>
+using namespace std;
+
+int choice, n, number, even = 0, odd = 0;
+bool run = true;
+
+void get() {
+    cout << "Введите количество элементов: ";
+    cin >> n;
+}
+
+void print_even() {
+    cout << "Четных чисел: " << even << endl; 
+}
+
+void print_odd() {
+    cout << "Нечетных чисел: " << odd << endl;
+}
+
+void count_even() {
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        if (arr[i] % 2 == 0) {
+            even += 1;
+        }
+    }
+    print_even();
+}
+
+void count_odd() {
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        if ((arr[i] % 2) > 0) {
+            odd += 1;
+        }
+    }
+    print_odd();
+}
+
+void create() {
+    if (n <= 0) {
+        cout << "Неверный формат" << endl;
+    }
+    else {
+        int arr[n];
+        cout << "Введите " << n << " целых чисел: " << endl;
+        for (int i = 0; i < n; i++) {
+            cin >> number;
+            arr[i] = number;
+        }
+        count_even();
+        count_odd();
+    }
+}
+
+void menu() {
+    cout << "------------" << endl;
+    cout << "1. Старт" << endl;
+    cout << "2. Выход" << endl;
+    cout << "Выбор: ";
+    cin >> choice;
+    cout << "------------" << endl;
+    
+    switch (choice) {
+        case 1:
+            get();
+            create();
+            break;
+        case 2:
+            run = false;
+            break;
+        default:
+            cout << "Неверный выбор" << endl;
+            menu();
+    }
+}
+
+int main() {
+    while (run) {
+        menu();
+    }
+    return 0;
+}
