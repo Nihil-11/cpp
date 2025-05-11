@@ -2,16 +2,27 @@
 #include <iostream>
 using namespace std;
 
-int main() {
-    int n;
-    cout << "Enter the number: ";
-    cin >> n;
-    
-    int summ = ((1 + n) * n) / 2; // Формула суммы арифметической прогрессии с шагом "1" 
+int n;
+
+void calculate() {
+    int summ = (((1 + n) * n) / 2); // Формула суммы арифметической прогрессии с шагом "1" 
+
     cout << "Sum from 1 to ";
     cout << n;
     cout << ": ";
     cout << summ;
+}
+
+int main() {
+    cout << "Enter the number: ";
+    cin >> n;
+    
+    if ((n <= 0) || (cin.fail())) { // проверка ввода
+        cout << "Enter a positive integer";
+    }
+    else {
+        calculate();
+    }
     
     return 0;
 }
