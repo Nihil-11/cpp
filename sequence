@@ -1,0 +1,84 @@
+
+#include <iostream>
+using namespace std;
+
+bool run = true;
+
+void analize(int* arr, int n) { // основная логика
+    int len = 1, max_len = 1;
+    
+    for (int i = 1; i < n; i++) {
+        if (arr[i] == (arr[i - 1] + 1)) {
+            len += 1;
+            if (len > max_len) {
+                max_len = len;
+            }
+        }
+        else {
+            len = 1;
+        }
+    }
+    cout << "Max increasing sequence length: " << max_len << endl;
+    cout << "---------------------------" << endl;
+}
+
+void create(int n) { // "создание" массива
+    int num;
+    int* arr = new int[n];
+    
+    cout << "Enter " << n << " numbers: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+        if (cin.fail()) {
+            cout << "Error. Enter a number";
+            run = false;
+            break;
+        }
+    }  
+    if (run) {
+        analize(arr, n);
+        delete [] arr; // очистка массива
+    }
+}
+
+void get() {
+    int n;
+    cout << "---------------------------" << endl;
+    cout << "Enter a number of numbers: ";
+    cin >> n;
+    if (cin.fail() || (n <= 0)) {
+        cout << "Error. Enter a positive number " << endl;
+        run = false;
+    }
+    else {
+        create(n);
+    }
+}
+
+void menu() { // меню для удобства
+    int choice;
+    cout << "1. Go" << endl;
+    cout << "2. Exit" << endl;
+    cout << "Choice: ";
+    cin >> choice;
+
+    switch (choice) {
+        case 1:
+            get();
+            break;
+        case 2:
+            cout << "Exit completed " << endl;
+            run = false;
+            break;
+        default:
+            cout << "Error. Wrong choice" << endl;
+            run = false;
+    }
+}
+
+int main() { // основной цикл
+    while (run) { 
+        menu();
+    }
+    return 0;
+}
