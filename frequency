@@ -1,0 +1,98 @@
+
+#include <iostream>
+using namespace std;
+
+bool run = true;
+
+void display(int most_frq, int max_count) { // выводит результат
+    cout << "Чаще всего встречается число " << most_frq
+         << " (" << max_count << " раз)" << endl;
+}
+
+void find(int n) { // алгоритм подсчета
+    int* arr = new int[n]; // массив для чисел
+    bool* checked = new bool[n](); // массив для проверки (был ли проверен i-ый и j-ый элемент arr)
+
+    for (int i = 0; i < n; i++) { // добавление элементов
+        cout << "Ввод: ";
+        cin >> arr[i];
+        if (cin.fail()) {
+            cout << "Ошибка. Введите число" << endl;
+            delete[] arr;
+            delete[] checked;
+            run = false;
+            return;
+        }
+    }
+
+    int max_count = 0; // число повторений числа
+    int most_frq = arr[0]; // само число (чаще всего повторявшееся)
+
+    for (int i = 0; i < n; i++) {
+        if (checked[i]) continue; // если число было проверено, то пропуск
+
+        int count = 1;  // считает самого себя
+
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+                checked[j] = true; // значение arr[j] было проверено
+            }
+        }
+
+        if (count > max_count) { 
+            max_count = count; // количество самого частого числа 
+            most_frq = arr[i]; // и его значение
+        }
+
+        checked[i] = true; // значение arr[i] было проверено
+    }
+
+    display(most_frq, max_count);
+
+    // очистка
+    delete[] arr;
+    delete[] checked;
+}
+
+void get() {
+    int n;
+    cout << "Введите количество элементов: ";
+    cin >> n;
+    if (cin.fail() || n <= 0) {
+        cout << "Ошибка. Введите положительное число" << endl;
+        run = false;
+    }
+    else {
+        find(n);
+    }
+}
+
+void menu() {
+    int choice;
+    cout << "------------" << endl;
+    cout << "1. Старт" << endl;
+    cout << "2. Выход" << endl;
+    cout << "Выбор: ";
+    cin >> choice;
+    cout << "------------" << endl;
+    
+    switch (choice) {
+        case 1:
+            get();
+            break;
+        case 2:
+            run = false;
+            break;
+        default:
+            cout << "Неверный выбор" << endl;
+            run = false;
+    }
+}
+
+int main() { // основной цикл программы
+    while (run) {
+        menu();
+    }
+    return 0;
+}
