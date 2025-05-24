@@ -1,0 +1,54 @@
+
+#include <iostream>
+using namespace std;
+
+void print(int n, int** arr) { // вывод массива
+
+    for (int i = 0; i < n; i++) { // проход по каждому элементу массива (подмассиву)
+        for (int j = 0; j <= i; j++) { // проход по каждому элементу подмассива 
+            cout << arr[i][j] << " ";
+        }
+        cout << endl;
+    }
+    
+}
+
+void build(int n) {
+    int** arr = new int*[n]; // массив для хранения подмассивов с числами (указателей на подмассивы)
+    
+    for (int i = 0; i < n; i++) {
+        arr[i] = new int[i + 1]; // каждый элемент массива - подмассив с i + 1 количеством чисел
+        for (int j = 0; j <= i; j++) { // заполнение подмассива числами
+            arr[i][j] = j + 1; 
+        }
+    }
+    
+    print(n, arr);
+    
+    // освобождение памяти после отображения результата
+    for (int i = 0; i < n; i++) { 
+        delete[] arr[i];
+    }
+    delete[] arr;
+    
+}
+
+void get() {
+    int n;
+    cout << "Enter the number: ";
+    cin >> n;
+    cout << endl;
+
+    if (cin.fail() || n < 2 || n > 20) {
+        cout << "Error. Enter a number from 2 to 20 " << endl;
+    }
+    
+    else {
+        build(n);
+    }
+}
+
+int main() {
+    get();
+    return 0;
+}
