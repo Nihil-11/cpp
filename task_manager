@@ -2,26 +2,30 @@
 #include <iostream>
 using namespace std;
 
-bool run = true;
+bool run = true; // флаг
 
-void display_tasks(string tasks[10], bool exist[10], int& n) { // вывод списка задач
-    
-    cout << endl;
+void display_tasks(string tasks[10], bool exist[10], bool completed[10], int& n) { // вывод списка задач
     if (n == 0) {
         cout << "No tasks yet" << endl;
     }
     else {
         cout << "Your tasks: " << endl;
+        
         for (int i = 0; i < n; i++) {
-            if (exist[i] == true) {
-                cout << i + 1 << ". " << tasks[i] << endl;
+            if (exist[i] == true) { // выводит только существующие задачи
+                cout << i + 1 << ". " << tasks[i] << " ";
             }
+            if (completed[i] == true) { // проверка на отметку
+                cout << "[✔]" ;
+            }
+            cout << endl;
         }
+        cout << endl;
     }
-    cout << endl;
+    
 }
 
-void add_task(string tasks[10], bool exist[10], int& n) { // добавление задачи
+void add_task(string tasks[10], bool exist[10], int& n) { // добавить задачу
     string task;
     
     if (n < 10) { // лимит задач: 10
@@ -29,8 +33,8 @@ void add_task(string tasks[10], bool exist[10], int& n) { // добавлени�
         cin.ignore();
         getline(cin, task);
         tasks[n] = task;
-        exist[n] = true;
-        n += 1;
+        exist[n] = true; // задача отмечается как существующая
+        n += 1; // увеличиваю счетчик
     }
     else {
         cout << "Task limit reached (10 tasks)" << endl;
@@ -38,22 +42,47 @@ void add_task(string tasks[10], bool exist[10], int& n) { // добавлени�
     
 }
 
-void delete_task(bool exist[10], int& n) { // удаление последней задачи
+void delete_task(bool exist[10], bool completed[10], int& n) { // удалить последнюю задачу
     if (n > 0) {
         exist[n - 1] = false; // помечает последнюю задачу как несуществующую
-        n -= 1;
+        completed[n - 1] = false; // аналогично с отметкой
+        n -= 1; // уменьшаю счетчик
     }
     else {
         cout << "No tasks to delete" << endl;
     }
 }
 
-void menu(string tasks[10], bool exist[10], int& n) {
+void mark_as_completed(bool exist[10], bool completed[10], int& n) { // пометить задачу как выполненную 
+    int number;
+    
+    if (n == 0) {
+        cout << "No tasks to mark" << endl;
+    }
+    else {
+        cout << "Mark as completed task №: ";
+        cin >> number;
+        
+        if (cin.fail() || number < 1 || number > n) {
+            cout << "Error. Wrong number" << endl;
+        }
+        else if (exist[number - 1] == false) {
+            cout << "No such task with this number" << endl;
+        }
+        else {
+            completed[number - 1] = true;
+        }
+    }
+}
+
+void menu(string tasks[10], bool exist[10], bool completed[10], int& n) { // меню
+    
     int choice;
     cout << "----------------------------" << endl;
     cout << "1. Show all tasks" << endl;
     cout << "2. Add new task" << endl;
     cout << "3. Delete last task" << endl;
+    cout << "4. Mark task as completed" << endl;
     cout << "0. Exit" << endl;
     cout << " Choice: ";
     cin >> choice;
@@ -66,13 +95,16 @@ void menu(string tasks[10], bool exist[10], int& n) {
     else {
         switch (choice) {
             case 1:
-                display_tasks(tasks, exist, n);
+                display_tasks(tasks, exist, completed, n);
                 break;
             case 2:
                 add_task(tasks, exist, n);
                 break;
             case 3:
-                delete_task(exist, n);
+                delete_task(exist, completed, n);
+                break;
+            case 4:
+                mark_as_completed(exist, completed, n);
                 break;
             case 0:
                 cout << "Exit complete" << endl;
@@ -89,15 +121,15 @@ void menu(string tasks[10], bool exist[10], int& n) {
 }
 
 int main() {
+
     int n = 0; // счетчик задач
     string tasks[10]; // лимит задач: 10
-    bool exist[10]; // существующие задачи
-    for (int i = 0; i < 10; i++) {
-        exist[i] = false;
-    }
+    bool exist[10] = {false}; // существующие задачи
+    bool completed[10] = {false}; // пометка "выполнено/не выполнено"
+
     
-    while (run) {
-        menu(tasks, exist, n);
+    while (run) { // основной цикл программы
+        menu(tasks, exist, completed, n);
     }
 
     return 0;
