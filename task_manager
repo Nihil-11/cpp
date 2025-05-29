@@ -1,0 +1,104 @@
+
+#include <iostream>
+using namespace std;
+
+bool run = true;
+
+void display_tasks(string tasks[10], bool exist[10], int& n) { // вывод списка задач
+    
+    cout << endl;
+    if (n == 0) {
+        cout << "No tasks yet" << endl;
+    }
+    else {
+        cout << "Your tasks: " << endl;
+        for (int i = 0; i < n; i++) {
+            if (exist[i] == true) {
+                cout << i + 1 << ". " << tasks[i] << endl;
+            }
+        }
+    }
+    cout << endl;
+}
+
+void add_task(string tasks[10], bool exist[10], int& n) { // добавление задачи
+    string task;
+    
+    if (n < 10) { // лимит задач: 10
+        cout << "Enter the task: ";
+        cin.ignore();
+        getline(cin, task);
+        tasks[n] = task;
+        exist[n] = true;
+        n += 1;
+    }
+    else {
+        cout << "Task limit reached (10 tasks)" << endl;
+    }
+    
+}
+
+void delete_task(bool exist[10], int& n) { // удаление последней задачи
+    if (n > 0) {
+        exist[n - 1] = false; // помечает последнюю задачу как несуществующую
+        n -= 1;
+    }
+    else {
+        cout << "No tasks to delete" << endl;
+    }
+}
+
+void menu(string tasks[10], bool exist[10], int& n) {
+    int choice;
+    cout << "----------------------------" << endl;
+    cout << "1. Show all tasks" << endl;
+    cout << "2. Add new task" << endl;
+    cout << "3. Delete last task" << endl;
+    cout << "0. Exit" << endl;
+    cout << " Choice: ";
+    cin >> choice;
+    cout << "----------------------------" << endl;
+    
+    if (cin.fail()) {
+        cout << "Error. Wrong choice" << endl;
+        run = false;
+    }
+    else {
+        switch (choice) {
+            case 1:
+                display_tasks(tasks, exist, n);
+                break;
+            case 2:
+                add_task(tasks, exist, n);
+                break;
+            case 3:
+                delete_task(exist, n);
+                break;
+            case 0:
+                cout << "Exit complete" << endl;
+                run = false;
+                break;
+            
+            default:
+                cout << "Error. Wrong choice" << endl;
+                run = false;
+                break;
+        }
+    }
+    
+}
+
+int main() {
+    int n = 0; // счетчик задач
+    string tasks[10]; // лимит задач: 10
+    bool exist[10]; // существующие задачи
+    for (int i = 0; i < 10; i++) {
+        exist[i] = false;
+    }
+    
+    while (run) {
+        menu(tasks, exist, n);
+    }
+
+    return 0;
+}
