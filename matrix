@@ -1,0 +1,88 @@
+
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+bool run = true;
+
+void create_matrix(int x, int y) { // создание и вывод матрицы 
+    int** matrix = new int*[y]; // массив массивов
+    
+    for (int i = 0; i < y; i++) { // проход по массиву 
+        matrix[i] = new int[x]; // массив из x элементов (подмассивов)
+        for (int j = 0; j < x; j++) { // проход по подмассиву
+            matrix[i][j] = rand() % 10 ; // заполнение рандомными числами
+        }
+    }
+    
+    cout << endl;
+    for (int i = 0; i < y; i++) { // вывод матрицы
+        for (int j = 0; j < x; j++) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+    
+    // освобождение памяти
+    for (int i = 0; i < y; i++) { 
+        delete[] matrix[i];
+    }
+    delete[] matrix;
+}
+
+void get_size(int& x, int& y) { // получение размера матрицы
+    cout << endl;
+    cout << "Введите размер матрицы" << endl;
+    cout << "Строк: ";
+    cin >> x;
+    cout << "Столбцов: ";
+    cin >> y;
+    
+    if (cin.fail() || x < 2 || y < 2) {
+        cout << "Ошибка. Неверный формат" << endl;
+        run = false;
+    }
+    else {
+        create_matrix(x, y); 
+    }
+}
+
+int main() {
+    while (run) {
+        srand(time(0));
+        int x, y; // размер матрицы
+        int choice;
+        
+        cout << "------------------------------" << endl;
+        cout << "1. Заполнить и вывести новую матрицу" << endl;
+        cout << "0. Выход" << endl;
+        cout << "Выбор: ";
+        cin >> choice;
+        cout << "------------------------------" << endl;
+        
+        if (cin.fail()) {
+            cout << "Ошибка. Неверный выбор" << endl;
+            run = false;
+        }
+        else {
+            switch (choice) {
+                case 1: 
+                    get_size(x, y);
+                    break;
+                case 0:
+                    cout << "Выход завершен" << endl;
+                    run = false;
+                    break;
+                default:
+                    cout << "Ошибка. Неверный выбор" << endl;
+                    run = false;
+                    break;
+            }
+        }
+    
+    }
+    
+    return 0;
+}
