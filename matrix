@@ -1,87 +1,168 @@
 
 #include <iostream>
-#include <cstdlib>
 #include <ctime>
+#include <cstdlib>
 using namespace std;
 
 bool run = true;
 
-void create_matrix(int x, int y) { // создание и вывод матрицы 
-    int** matrix = new int*[y]; // массив массивов
-    
-    for (int i = 0; i < y; i++) { // проход по массиву 
-        matrix[i] = new int[x]; // массив из x элементов (подмассивов)
-        for (int j = 0; j < x; j++) { // проход по подмассиву
-            matrix[i][j] = rand() % 10 ; // заполнение рандомными числами
-        }
-    }
-    
-    cout << endl;
-    for (int i = 0; i < y; i++) { // вывод матрицы
-        for (int j = 0; j < x; j++) {
-            cout << matrix[i][j] << " ";
-        }
-        cout << endl;
-    }
-    cout << endl;
-    
-    // освобождение памяти
-    for (int i = 0; i < y; i++) { 
+void clear_matrix(int& y, int** &matrix) { // очищает матрицу
+    for (int i = 0; i < y; i++) {
         delete[] matrix[i];
     }
     delete[] matrix;
+    matrix = nullptr;
 }
 
-void get_size(int& x, int& y) { // получение размера матрицы
-    cout << endl;
-    cout << "Введите размер матрицы" << endl;
-    cout << "Строк: ";
-    cin >> x;
-    cout << "Столбцов: ";
-    cin >> y;
+int** fill_matrix(int& x, int& y, int** &matrix) { // заполняет матрицу
+    if (matrix != nullptr) { // если матрица уже есть - 
+        clear_matrix(y, matrix); // стирает ее
+    }
+    matrix = new int*[y];
+
+    for (int i = 0; i < y; i++) {
+        matrix[i] = new int[x]; // выделяю память для каждого нового подмассива
+        for (int j = 0; j < x; j++) { // заполнение каждого подмассива
+            cout << "Введите цифру: ";
+            cin >> matrix[i][j];
+            if (cin.fail() || matrix[i][j] < 0) {
+                cout << "Ошибка. Введите положительное число" << endl;
+            }
+        }
+        
+    }
     
-    if (cin.fail() || x < 2 || y < 2) {
-        cout << "Ошибка. Неверный формат" << endl;
+    return matrix;
+}
+
+int** random_matrix(int& x, int& y, int** &matrix) { // заполняет матрицу рандомными числами
+    if (matrix != nullptr) { // если матрица уже есть - 
+        clear_matrix(y, matrix); // стирает ее
+    }
+    
+    matrix = new int*[y];
+    
+    for (int i = 0; i < y; i++) {
+        matrix[i] = new int[x]; // выделяю память для каждого нового подмассива
+        for (int j = 0; j < x; j++) { // заполнение каждого подмассива
+            matrix[i][j] = rand() % 10;
+        }
+    }
+    
+    return matrix;
+}
+
+int** multiply_matrix(int& x, int& y, int** &matrix) { // умножает матрицу
+    int multiplier;
+    cout << "Умножить матрицу на: ";
+    cin >> multiplier;
+    
+    if (cin.fail() || multiplier < 0) {
+        cout << "Ошибка. Введите положительное число" << endl;
+        cin.clear();
+    }
+    else {
+        for (int i = 0; i < y; i++) {
+            for (int j = 0; j < x; j++) {
+                matrix[i][j] *= multiplier; 
+            }
+        }
+    }
+    
+    return matrix;
+}
+
+void print_matrix(int& x, int& y, int** &matrix) { // выводит матрицу
+    for (int i = 0; i < y; i++) { // проход по массиву
+        for (int j = 0; j < x; j++) { // проход по i-му подмассиву
+            cout << matrix[i][j] << " ";
+        }
+    cout << endl;
+    }
+}
+
+void menu(int& x, int& y, int** &matrix) { // меню для выбора действия 
+    int choice;
+    
+    cout << "------------------------------" << endl;
+    cout << "1. Вывести матрицу" << endl;
+    cout << "2. Заполнить матрицу" << endl;
+    cout << "3. Случайно сгенерировать матрицу" << endl;
+    cout << "4. Умножить матрицу" << endl;
+    cout << "0. Выход" << endl;
+    cout << "Выбор: ";
+    cin >> choice;
+    cout << "------------------------------" << endl;
+        
+    if (cin.fail()) {
+        cout << "Ошибка. Неверный выбор" << endl;
         run = false;
     }
     else {
-        create_matrix(x, y); 
+        switch (choice) {
+            case 1: 
+                if (matrix == nullptr) {
+                    cout << "Сначала заполните матрицу значениями" << endl;
+                }
+                else {
+                    print_matrix(x, y, matrix);
+                }
+                break;
+            case 2:
+                fill_matrix(x, y, matrix);
+                break;
+            case 3: 
+                random_matrix(x, y, matrix);
+                break;
+            case 4:     
+                if (matrix == nullptr) {
+                    cout << "Сначала заполните матрицу значениями" << endl;
+                }
+                else {
+                    multiply_matrix(x, y, matrix);
+                }
+                break;
+            case 0:
+                cout << "Выход завершен" << endl;
+                run = false;
+                break;
+                    
+            default:
+                cout << "Ошибка. Неверный выбор" << endl;
+                run = false;
+                break;
+        }
+        
     }
+    
 }
 
 int main() {
-    while (run) {
-        srand(time(0));
-        int x, y; // размер матрицы
-        int choice;
+    // объявляю вне цикла, чтобы значения не перезаписывались
+    int x, y; // размер матрицы (обращаться надо через ссылки, чтобы изменения читались в main)
+    int** matrix = nullptr; // матрица (указатель на массив указателей)
+    srand(time(0));
+    
+    while (run) { // основной цикл программы
+        if (matrix == nullptr) { // если матрица "пустая", то запрашивает размер
+            cout << "------------------------------" << endl;
+            cout << "Введите размер матрицы" << endl;
+            cout << "Строк: ";
+            cin >> x;
+            cout << "Столбцов: ";
+            cin >> y;
         
-        cout << "------------------------------" << endl;
-        cout << "1. Заполнить и вывести новую матрицу" << endl;
-        cout << "0. Выход" << endl;
-        cout << "Выбор: ";
-        cin >> choice;
-        cout << "------------------------------" << endl;
-        
-        if (cin.fail()) {
-            cout << "Ошибка. Неверный выбор" << endl;
-            run = false;
-        }
-        else {
-            switch (choice) {
-                case 1: 
-                    get_size(x, y);
-                    break;
-                case 0:
-                    cout << "Выход завершен" << endl;
-                    run = false;
-                    break;
-                default:
-                    cout << "Ошибка. Неверный выбор" << endl;
-                    run = false;
-                    break;
+            if (cin.fail() || x < 2 || y < 2) {
+                cout << "Ошибка. Неверный формат" << endl;
+                run = false;
+            }
+            else {
+                menu(x, y, matrix);
             }
         }
-    
+        else { // если матрица уже существует, вызывает меню
+            menu(x, y, matrix);
+        }
     }
     
     return 0;
