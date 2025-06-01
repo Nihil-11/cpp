@@ -1,0 +1,150 @@
+
+#include <iostream>
+using namespace std;
+
+bool run = true;
+
+void create_array(int* &arr, int &size) {
+    arr = new int[size];
+    
+    cout << "Введите " << size << " элементов (целых чисел): ";
+    for (int i = 0; i < size; i++) {
+        cin >> arr[i];
+        if (cin.fail() || arr[i] < 0) {
+            cout << "Ошибка. Неверный ввод";
+            run = false;
+            break;
+        }
+    }
+}
+
+void get_size(int* &arr, int &size) {
+    cout << "Введите размер массива: ";
+    cin >> size;
+    
+    if (cin.fail() || size < 2 || size > 100) {
+        cout << "Ошибка. Неверный формат" << endl;
+        run = false;
+    }
+}
+
+int* calculate(int* &arr, int* &numtraces, int &size) {
+    if (numtraces != nullptr) {
+        delete[] numtraces;
+        numtraces = nullptr;
+    }
+    numtraces = new int[size]; // указатель на массив числовых следов
+    
+    for (int i = 0; i < size; i++) {
+        int numtrace = 0;
+        int temp = arr[i]; // копия элемента массива
+        while (temp > 0) {
+            numtrace += temp % 10; // суммирую цифры числа с конца
+            temp /= 10; // целочисленное деление (избавление от прибавленного остатка)
+        }
+        numtraces[i] = numtrace;
+    }
+    
+    cout << "Числовые следы: ";
+    for (int i = 0; i < size; i++) {
+        cout << numtraces[i] << " ";
+    }
+    cout << endl;
+    
+    return numtraces;
+}
+
+void find_max(int* &arr, int* &numtraces, int &size) {
+    int maximum = -10000;
+    int num;
+    for (int i = 0; i < size; i++) {
+        if (numtraces[i] > maximum) {
+            maximum = numtraces[i];
+            num = arr[i]; 
+        }
+    }
+    cout << "Максимальный числовой след: " << maximum << " от числа " << num << endl;
+}
+
+void menu(int* &arr, int* &numtraces, int &size) {
+    int choice;
+    
+    cout << "------------------------------------------" << endl;
+    cout << "1. Ввести массив" << endl;
+    cout << "2. Вычислить числовые следы" << endl;
+    cout << "3. Вычислить максимальный числовой след" << endl;
+    cout << "0. Выход" << endl;
+    cout << "Выбор: ";
+    cin >> choice;
+    cout << "------------------------------------------" << endl;
+    if (cin.fail()) {
+        cout << "Неверный выбор" << endl;
+        run = false;
+    }
+    else {
+        switch (choice) {
+            case 1:
+                if (arr != nullptr) {
+                    delete[] arr;
+                    arr = nullptr;
+                }
+                if (numtraces != nullptr) {
+                    delete[] numtraces;
+                    numtraces = nullptr;
+                }
+                get_size(arr, size);
+                if (run) {
+                    create_array(arr, size);
+                }
+                break;
+                
+            case 2: 
+                if (arr == nullptr) {
+                    cout << "Сначала введите массив" << endl;
+                }
+                else {
+                    calculate(arr, numtraces, size);
+                }
+                break;
+                
+            case 3: 
+                if (arr == nullptr) {
+                    cout << "Сначала введите массив" << endl;
+                }
+                else if (numtraces == nullptr) {
+                    cout << "Сначала вычислите числовые следы" << endl;
+                }
+                else {
+                    find_max(arr, numtraces, size);
+                }
+                break;
+                
+            case 0: 
+                cout << "Выход завершен" << endl;
+                if (arr != nullptr) {
+                    delete[] arr;
+                }
+                if (numtraces != nullptr) {
+                    delete[] numtraces;
+                }
+                run = false;
+                break;
+                
+            default:
+                cout << "Ошибка. Неверный выбор" << endl;
+                run = false;
+                break;
+        }
+    }
+}
+
+int main() {
+    // так как объявляю в main, то в дальнейшем надо обращаться по ссылке (&)
+    int* arr = nullptr;
+    int* numtraces = nullptr;
+    int size;
+    while (run) {
+        menu(arr, numtraces, size);
+    }
+    return 0;
+}
