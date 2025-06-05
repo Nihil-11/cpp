@@ -1,0 +1,142 @@
+
+#include <iostream>
+#include <limits>
+#include <ctime>
+#include <cstdlib>
+
+using namespace std;
+
+bool run = true;
+
+void clear_entry() {
+    cin.clear();
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void enter_array(int arr[100], int current[100], int &size) {
+    for (int i = 0; i < 100; i++) {
+        bool not_entered = true;
+            while (not_entered) { // пока не будет введено правильное значение, движение по циклу не продолжится
+            cout << "Введите элемент (" << i << "/100): ";
+            cin >> arr[i];
+            current[i] = arr[i];
+            
+            if (cin.fail()) {
+                cout << "Ошибка. Введите целое число" << endl;
+                clear_entry();
+            }
+            else {
+                not_entered = false; // если все ок, то переходит к следующему элементу
+            }
+        }
+    }
+
+}
+
+void print_array(int current[100], int &size) {
+    if (size > 0) {
+        cout << "[";
+        for (int i = 0; i < size - 1; i++) {
+            cout << current[i] << ", "; 
+        }
+        cout << current[size - 1];
+        cout << "]" << endl;
+    }
+    else {
+        cout << "Массив пуст." << endl;
+    }
+}
+
+void random_array(int arr[100], int current[100], int &size) {
+    size = 100;
+    for (int i = 0; i < size; i++) {
+        arr[i] = rand() % 100;
+        current[i] = arr[i];
+    }
+}
+
+void delete_evensum(int current[100], int &size) { 
+    int index = 0;
+    int temp[100];
+    
+    for (int i = 0; i < size; i++) {
+        int sum_of_digits = 0;
+        int num = current[i];
+    
+        while (num != 0) { // алгоритм подсчета суммы цифр
+            sum_of_digits += num % 10;
+            num /= 10;
+        }
+        
+        if ((sum_of_digits % 2) != 0) {
+            temp[index++] = current[i]; // запись подхдящих значений в temp
+        }
+    }
+    
+    if (index > 0) {
+        for (int i = 0; i < index; i++) { // итерации в пределах количества подходящих значений
+            current[i] = temp[i];
+        }
+        size = index;
+    }
+    else {
+        cout << "В массиве нет чисел с нечётной суммой цифр " << endl;
+    }
+    
+}
+
+void return_to_orig(int arr[100], int current[100], int &size) {
+    size = 100;// возвращение к стандартному размеру
+    for (int i = 0; i < size; i++) {
+        current[i] = arr[i]; 
+    }
+}
+
+void menu(int arr[100], int current[100], int &size) {
+    int choice;
+    
+    cout << "--------------------------------------" << endl;
+    cout << "---------------- МЕНЮ ----------------" << endl;
+    cout << "1. Ввести массив" << endl;
+    cout << "2. Вывод массива" << endl;
+    cout << "3. Генерация случайного массива" << endl;
+    cout << "4. Удаление чисел с четной суммой цифр" << endl;
+    cout << "5. Сброс к исходному массиву" << endl;
+    cout << "0. Выход" << endl;
+    cout << "Выбор: ";
+    cin >> choice;
+    
+    if (cin.fail()) {
+        cout << "Неверный выбор" << endl;
+        clear_entry();
+    }   
+    else {
+        switch (choice) {
+            case 1: enter_array(arr, current, size); break;
+            case 2: print_array(current, size); break;
+            case 3: random_array(arr, current, size); break;
+            case 4: delete_evensum(current, size); break;
+            case 5: return_to_orig(arr, current, size); break;
+            case 0: cout << "   Выход завершен" << endl; run = false; break;
+            
+            default:
+                cout << "Неверный выбор";
+                clear_entry();
+                break;
+        }
+    }
+    
+} 
+
+int main() {
+    srand(time(0));
+    int arr[100];
+    int current[100];
+    int size = 100;
+    
+    while (run) {
+        menu(arr, current, size);
+    }
+    
+    return 0;
+}
