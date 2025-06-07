@@ -1,0 +1,167 @@
+
+#include <ctime>
+#include <iostream>
+#include <limits>
+#include <cstdlib>
+
+using namespace std;
+
+// функция для обработки ошибок при вводе, принимает текст в случае ошибки внутри функции, откуда вызвали get(). очищает буфер cin, дает возможность повторного ввода
+int get(const char* error_text) { 
+    int variable; // введенное значение "передастся" в функцию, откуда был вызван get
+    bool not_ok = true;
+    
+    while (not_ok) {
+        cin >> variable;
+        
+        if (cin.fail()) {
+            cout << "Ошибка. " << error_text << endl;
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        else {
+            not_ok = false;
+        }
+    }
+    
+    return variable;
+}
+
+// ввод размера матрицы (get() не используется из за условий)
+void get_size(int &n, int &m) {
+    bool not_ok = true;
+    
+    while (not_ok) {
+        cout << "Введите количество строк: ";
+        cin >> n;
+        if (cin.fail() || n < 2 || n > 10) {
+            cout << "Введите правильный размер (мин. 2, макс. 10)" << endl;
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        else {
+            not_ok = false;
+        }
+    }
+    
+    not_ok = true;
+    while (not_ok) {
+        cout << "Введите количество столбцов: ";
+        cin >> m;
+        if (cin.fail() || m < 2 || m > 10) {
+            cout << "Введите правильный размер (мин. 2, макс. 10)" << endl;
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        else {
+            not_ok = false;
+        }
+    }
+    
+}
+
+// нахождение максимальной суммы строки
+void find_max_sum(int n, int m, int matrix[10][10]) {
+    int row_sum[10] = {0}; // сумма каждой строки
+    int max_sum = row_sum[0];
+    bool is_max[10] = {true}; // флаг (индекс макс строки)
+    
+    for (int i = 0; i < n; i++) { // суммирование каждой строки
+        int summ = 0;
+        for (int j = 0; j < m; j++) {
+            summ += matrix[i][j]; 
+        }
+        row_sum[i] = summ;
+        is_max[i] = false;
+    }
+    
+    for (int i = 1; i < n; i++) { // проверка на максимальную строку
+        if (row_sum[i] >= max_sum) {
+            max_sum = row_sum[i];
+            is_max[i] = true; // сохранение флага максимальной суммы
+        }
+    }
+    
+    cout << "Максимальная сумма строки: " << max_sum << endl;
+    cout << "Строка: ";
+    for (int i = 0; i < n; i++) { // вывод строки
+        if (is_max[i] == true) { // проверка флага
+            for (int j = 0; j < m; j++) {
+                cout << matrix[i][j] << " "; 
+            }
+        }
+    }
+    
+}
+
+// вывод матрицы
+void display(int n, int m, int matrix[10][10]) {
+    cout << endl;
+    cout << "Матрица: " << endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+    
+    find_max_sum(n, m, matrix);
+}
+
+// заполнение матрицы пользователем вручную
+void fill(int n, int m, int matrix[10][10]) {
+    const char error_text[] = "Введите целое число";
+    
+    cout << "Введите матрицу: " << endl;
+    for (int i = 0; i < n; i++) {
+        cout << i + 1 << " строка: ";
+        for (int j = 0; j < m; j++) {
+            matrix[i][j] = get(error_text);
+        }    
+    }
+    
+    display(n, m, matrix);
+}
+
+// заполнение матрицы случайными цифрами 
+void random(int n, int m, int matrix[10][10]) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            matrix[i][j] = rand() % 21 - 10;
+        }
+    }
+    
+    display(n, m, matrix);
+}
+
+// выбор пользователем, как заполнить матрицу
+void choose(int n, int m, int matrix[10][10]) {
+    int choice;    
+
+    cout << "1. Заполнить матрицу " << n << "x" << m << " вручную" << endl;
+    cout << "2. Заполнить матрицу " << n << "x" << m << " случайно" << endl;
+    cout << "Выбор: ";
+    
+    const char text[] = "Неверный выбор";
+    
+    choice = get(text);
+        
+    switch (choice) {
+        case 1: fill(n, m, matrix); break;
+        case 2: random(n, m, matrix); break;
+        default: cout << "Неверный выбор" << endl; break;
+    }
+}
+
+int main() {
+    // ход программы:
+    // получение размеров -> выбор способа заполнения матрицы -> вывод результата
+    int n, m;
+    int matrix[10][10]; // матрица с максимальным размером 10x10
+    srand(time(0)); 
+    get_size(n, m);  
+    choose(n, m, matrix);
+
+    return 0;
+}
