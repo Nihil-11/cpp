@@ -1,79 +1,343 @@
 
 #include <iostream>
+#include <limits>
+#include <ctime>
+#include <cstdlib>
+
 using namespace std;
 
-int a, b, choice;
-double result;
-char oper;
-bool run = true;
+bool run = true; // флаг
+bool created = false;
 
-void display() { // вывод результата
-    cout << "Result: " << result << endl;
+void clean(int*& arr, int& n) { // очистка массива
+    delete[] arr;
+    arr = nullptr;
+    n = 0;
+    
+    created = false;
 }
 
-void calculate() { // выполнение выбранной операции
-    switch (oper) {
-        case '+':
-            result = a + b;
-            display();
-            break;
-        case '-':
-            result = a - b;
-            display();
-            break;
-        case '*':
-            result = a * b;
-            display();
-            break;
-        case '/':
-            if (b == 0) {
-                cout << "Division by 0" << endl;
-            } 
-            else {
-                result = static_cast<double>(a) / b;
-                display();
+void clear_entry() { // очистка буфера cin
+    cin.clear();
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void show_error() {
+    cout << "Сначала создайте массив" << endl;
+}
+
+void display_array(int* arr, int n) { // вывод массива
+    cout << "Массив: [";
+    for (int i = 0; i < n - 1; i++) {
+        cout << arr[i] << " "; 
+    }
+    cout << arr[n - 1] << "]" << endl;
+}
+
+void sort_array(int* arr, int n) { // сортировка значений массива
+    int choice_sort;
+    cout << "Отсортировать массив: " << endl;
+    cout << "1. По возрастанию" << endl;
+    cout << "2. По убыванию" << endl;
+    cout << "Выбор: ";
+    cin >> choice_sort;
+    
+    if (choice_sort == 1) { // сортировка по возрастанию
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    swap(arr[j], arr[j + 1]);
+                }
             }
+        }
+        display_array(arr, n);
+    }
+    
+    else if (choice_sort == 2) { // сортировка по убыванию
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] < arr[j + 1]) {
+                    swap(arr[j], arr[j + 1]);
+                }
+            }
+        }
+        display_array(arr, n);
+    }
+    
+    else {
+        cout << "Ошибка. Неверный выбор" << endl;
+        clear_entry();
+    }
+    if (cin.fail()) {
+        cout << "Ошибка. Неверный выбор" << endl;
+        run = false;
+    }
+}
+
+void replace(int* arr, int n) { // замена элемента массива по индексу
+    int i, repl;
+    
+    cout << "Заменить элемент (введите индекс [0; " << n << "]): ";
+    cin >> i;
+    if (cin.fail() || (i >= n)) {
+        cout << "Ошибка. Введите корректный индекс";
+        run = false;
+    }
+    else {
+       cout << "Заменить " << i << " элемент на: ";
+       cin >> repl;
+       if (cin.fail()) {
+           cout << "Ошибка. Введите число" << endl;
+           run = false;
+       }
+       else {
+           arr[i] = repl;
+       }
+       display_array(arr, n);
+    }
+}
+
+void shift_array(int* arr, int n) { // сдвиг массива влево/вправо
+    int choice_shift, k;
+    
+    cout << "1. Сдвинуть влево " << endl;
+    cout << "2. Сдвинуть вправо " << endl;
+    cout << "Выбор: ";
+    cin >> choice_shift;
+    if (cin.fail()) {
+        cout << "Ошибка. Неверный выбор" << endl;
+        delete[] arr;
+        run = false;
+    }
+    
+    switch (choice_shift) {
+        case 1:
+            cout << "Сдвинуть влево на: ";
             break;
+    
+        case 2:
+            cout << "Сдвинуть вправо на: ";
+            break;
+    
         default:
-            cout << "Unknown operation" << endl;
+            cout << "Ошибка. Неверный выбор " << endl;
+            delete[] arr;
             run = false;
             break;
     }
-}
 
-void get() { // получение значений от пользователя
-    cout << "Enter the first number: ";
-    cin >> a;
-    cout << "Enter the second number: ";
-    cin >> b;
-    cout << "Enter the operator (+ - * /): ";
-    cin >> oper;
+    cin >> k;
+    if (cin.fail()) {
+        cout << "Ошибка. Введите число" << endl;
+        delete[] arr;
+        run = false;
+    }
     
-    calculate();
+    else {
+        k = k % n;
+        int* temp = new int[n];
+    
+        if (choice_shift == 1) { // сдвиг влево
+            for (int i = 0; i < n; i++) { // сохраняю arr[i] в новую позицию (i + k) % n в temp[i]
+                temp[(i - k + n) % n] = arr[i];
+            }
+        
+            for (int i = 0; i < n; i++) { // заменяю arr[i] на сдвинутый на k arr[i] (temp[i])
+                arr[i] = temp[i];
+            }
+        
+            delete[] temp;
+            display_array(arr, n);
+        }
+    
+        else if (choice_shift == 2) { // сдвиг вправо
+            
+            for (int i = 0; i < n; i++) { // сохраняю arr[i] в новую позицию (i + k) % n в temp[i]
+                temp[(i + k) % n] = arr[i];
+            }
+            
+            for (int i = 0; i < n; i++) { // заменяю arr[i] на сдвинутый на k arr[i] (temp[i])
+                arr[i] = temp[i];
+            }
+            
+            delete[] temp;
+            display_array(arr, n);
+        }
+    }
 }
 
-void menu() { // главное меню
-    cout << "----------------" << endl;
-    cout << "1. Calculate" << endl;
-    cout << "2. Exit" << endl;
-    cout << "Choice: ";
+void search(int* arr, int n) { // поиск элемента по значению
+    int target;
+    
+    cout << "Найти элемент: ";
+    cin >> target;
+    
+    if (cin.fail()) {
+        cout << "Ошибка. Введите число";
+        run = false;
+        delete[] arr;
+    }
+    else {
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if (arr[i] == target) {
+                count += 1;
+            }
+        }
+        if (count == 0) {
+            cout << "Элемент со значением " << target << " не найден" << endl;
+        }
+        else {
+            int t = 0;
+            int* indices = new int[count]; // массив для хранения индексов
+            for (int i = 0; i < n; i++) {
+                if (arr[i] == target) {
+                    indices[t] = i;
+                    t += 1;
+                }
+            }
+            
+            cout << "Значение " << target << " найдено по индексам: ";
+            for (int i = 0; i < count; i++) {
+                cout << indices[i] << " ";
+            }
+            cout << endl;
+            delete[] indices;
+            
+        }
+    }
+}
+
+void reverse(int* arr, int n) { // разровот массива
+    for (int i = 0; i < n / 2; i++) { // обменивает элементы с концами, пока не дойдет до середины
+        int swap = arr[i];
+        arr[i] = arr[n - 1 - i];
+        arr[n - 1 - i] = swap;
+    }
+    display_array(arr, n);
+}
+
+void find_min_max(int* arr, int n) { // поиск мин./макс. значения
+    int maximum = -10000;
+    int minimum = 10000;
+    
+    for (int i = 0; i < n; i++) { // поиск макс. значения
+        if (arr[i] > maximum) {
+            maximum = arr[i];
+        }
+    }
+    
+    for (int i = 0; i < n; i++) { // поиск мин. значения
+        if (arr[i] < minimum) {
+            minimum = arr[i];
+        }
+    }
+    
+    int summ = 0, len = 0;
+    for (int i = 0; i < n; i++) { // подсчет среднего значения
+        summ += arr[i];
+        len += 1;
+    }
+    int average = static_cast<float>(summ) / (len);
+    
+    cout << "Минимальное значение в массиве: " << minimum << endl;
+    cout << "Максимальное значение в массиве: " << maximum << endl;
+    cout << "Среднее значение массива: " << average << endl;
+}
+
+void create_array(int*& arr, int& n) { // создание массива
+    cout << "Введите количество элементов: ";
+    cin >> n;
+    
+    if (cin.fail() || n <= 0) {
+        cout << "Ошибка. Введите положительное число" << endl;
+        run = false;
+    }
+    
+    delete[] arr;
+    arr = new int[n];
+
+    cout << "Введите элементы: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+            
+        if (cin.fail()) {
+            cout << "Ошибка. Введите число" << endl;
+            run = false;
+            break;
+        }
+    }
+    created = true;
+}
+
+void menu(int*& arr, int& n) { // главное меню с выбором действия
+    int choice;
+    cout << " " << endl;
+    cout << "------------------------------------------" << endl;
+    cout << "---------------- МЕНЮ --------------------" << endl;
+    cout << "1. Создать новый массив" << endl;
+    cout << "2. Вывод массива" << endl;
+    cout << "3. Очистить массив" << endl;
+    cout << "4. Отсортировать по возрастанию/убыванию" << endl;
+    cout << "5. Заменить элемент по индексу" << endl;
+    cout << "6. Сдвинуть массив вправо/влево" << endl;
+    cout << "7. Поиск элемента по значению" << endl;
+    cout << "8. Перевернуть массив" << endl;
+    cout << "9. Найти мин., макс., среднее значение" << endl;
+    cout << "0. Выход из программы" << endl;
+    cout << " " << endl;
+    cout << "Выбор: ";
     cin >> choice;
+    if (cin.fail()) {
+        cout << "Неверный выбор" << endl;
+        clear_entry();
+    }
+    cout << "------------------------------------------" << endl;
     
     switch (choice) {
-        case 1:
-            get();
-            break;
-        case 2:
-            run = false; // при run = false основной цикл останавливается (while false)
+        case 1: create_array(arr, n); break;
+        case 2: 
+            if (created) {display_array(arr, n); break;}
+            else {show_error(); break;}
+        case 3: 
+            if (created) {clean(arr, n); break;}
+            else {show_error(); break;}
+        case 4: 
+            if (created) {sort_array(arr, n); break;}
+            else {show_error(); break;}
+        case 5: 
+            if (created) {replace(arr, n); break;}
+            else {show_error(); break;}
+        case 6: 
+            if (created) {shift_array(arr, n); break;}
+            else {show_error(); break;}
+        case 7: 
+            if (created) {search(arr, n); break;}
+            else {show_error(); break;}
+        case 8: 
+            if (created) {reverse(arr, n); break;}
+            else {show_error(); break;}
+        case 9: 
+            if (created) {find_min_max(arr, n); break;}
+            else {show_error(); break;}
+        case 0:
+            cout << endl;
+            cout << "Выход завершен";
+            delete[] arr;
+            run = false;
             break;
         default: 
-            cout << "Wrong choice" << endl;
+            cout << "Ошибка. Неверный выбор";
+            run = false;
+            break;
     }
+    
 }
 
-int main() { // основной цикл
-    while (run) { // по умолчанию run носит true, при желании выйти из программы run приобретает false, что останавливает цикл 
-        menu();
+int main() { // основной цикл программы
+    int* arr = nullptr;
+    int n;
+    while (run) {
+        menu(arr, n);
     }
-    return 0;
 }
