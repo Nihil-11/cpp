@@ -1,0 +1,72 @@
+
+#include <iostream>
+using namespace std;
+
+void split_to_digits(int arr[], int size, bool unique_numbers[]) {
+    int** temp = new int*[size]; // массив чисел (массивов из цифр)
+    int lengths[size]; // массив для хранения длины числа
+    
+    for (int i = 0; i < size; i++) { // считаю длину числа
+        int num = arr[i];
+        int len = 0;
+        if (num == 0) {
+            len = 1;
+        } else {
+            while (num > 0) {
+                len += 1;
+                num /= 10;
+            }
+        }
+        lengths[i] = len; // сохраняю длину числа
+        
+        temp[i] = new int[len]; // каждое число выступает как подмассив из цифр
+        int temp_num = arr[i];
+        for (int j = 0; j < len; j++) { // заполнение подмассива цифрами 
+            temp[i][j] = temp_num % 10;
+            temp_num /= 10;
+        }
+        
+        // проверка на уникальность набора цифр в числе
+        bool used[10] = {false};
+        bool is_unique = true;
+        for (int n = 0; n < len; n++) {
+            if (used[temp[i][n]]) {
+                is_unique = false;
+                break;
+            }
+            used[temp[i][n]] = true;
+        }
+        if (is_unique) {
+            unique_numbers[i] = true; // сохраняю флаг
+        }
+    }
+
+    cout << "Числа с уникальными цифрами: ";
+    for (int j = 0; j < size; j++) { // вывод чисел
+        if (unique_numbers[j]) { // проверка флага
+            cout << arr[j] << " ";
+        }
+    }
+    
+    // освобождние памяти
+    for (int t = 0; t < size; t++) {
+        delete[] temp[t];
+    }
+    delete[] temp;
+}
+
+int main() {
+    int arr[] = {123, 989, 456, 787, 321, 111, 0}; // любой массив из целых положительных чисел
+    int size = sizeof(arr) / sizeof(arr[0]); // длина массива
+    bool unique_numbers[size] = {false}; // флаги 
+
+    cout << "Изначальный массив: ";
+    for (int i = 0; i < size; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+    
+    split_to_digits(arr, size, unique_numbers);
+    
+    return 0;
+}
