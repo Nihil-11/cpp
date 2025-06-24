@@ -1,0 +1,183 @@
+
+#include <iostream>
+#include <limits>
+#include <cstdlib>
+#include <iomanip>
+using namespace std;
+
+bool run = true;
+
+void free_memory(string* &names, int** &scores, int* &totals, int members, int rounds) {
+    delete[] names;
+    for (int i = 0; i < members; i++) {
+        delete[] scores[i];
+    }
+    delete[] scores;
+    delete[] totals;
+}
+
+void clear_entry() {
+    cout << "Ошибка. Неверный ввод" << endl;
+    cin.clear();
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void show_error() {
+    cout << "Сначала введите данные" << endl;
+}
+
+void names_and_points(string* &names, int** &scores, int* &totals, int &members, int &rounds) {
+    names = new string[members];
+    scores = new int*[members];
+    for (int i = 0; i < members; i++) {
+        scores[i] = new int[rounds]; 
+    }
+    totals = new int[members];
+    
+    for (int i = 0; i < members; i++) {
+        cout << "Имя участника #" << i + 1 << ": ";
+        cin >> names[i];
+        if (cin.fail()) {clear_entry();} else {
+            int total = 0;
+            for (int j = 0; j < rounds; j++) {
+                cout << "Очки за " << j + 1 << " раунд: ";
+                cin >> scores[i][j];
+                if (cin.fail()) {clear_entry();} else {total += scores[i][j];}
+            }
+            totals[i] = total;
+        }
+    }
+}
+
+void enter_data(string* &names, int** &scores, int* &totals, int &members, int &rounds) {
+    cout << "Количество участников: ";
+    cin >> members;
+    if (cin.fail()) {clear_entry();} else {
+        cout << "Количество раундов: ";
+        cin >> rounds;
+        if (cin.fail()) {clear_entry();} else {
+            if (names != nullptr) {
+                free_memory(names, scores, totals, members, rounds);
+            }
+            names_and_points(names, scores, totals, members, rounds);
+        }
+    }
+}
+
+
+void show_table(string* &names, int** &scores, int* &totals, int &members, int &rounds) {
+    cout << "Имя       ";
+    for (int i = 0; i < rounds; i++) {
+        cout << "| R" << i + 1 << " ";
+    }
+    cout << "| Сумма" << endl;
+    cout << "----------------------------------" << endl;
+
+    for (int i = 0; i < members; i++) {
+        cout << left << setw(10) << names[i];
+        for (int j = 0; j < rounds; j++) {
+            cout << "| " << setw(2) << scores[i][j] << " ";
+        }
+        cout << "|  " << totals[i] << endl;
+    }
+}
+
+void find_winner(string* &names, int* &totals, int &members) {
+    int max = totals[0];
+    int index = 0;
+    for (int i = 0; i < members; i++) {
+        if (totals[i] > max) {
+            max = totals[i];
+            index = i;
+        }
+    }    
+    cout << "Победитель: " << names[index] << ", общий счет: " << totals[index] << endl;
+}
+
+void average_score(string* &names, int** &scores, int &members, int &rounds) {
+    cout << "Средний балл участников: " << endl;
+    for (int i = 0; i < members; i++) {
+        int summ = 0;
+        for (int j = 0; j < rounds; j++) {
+            summ += scores[i][j];
+        }
+        double average = static_cast<double>(summ) / rounds;
+        cout << names[i] << ": " << average << endl;
+    }
+}
+
+void sort_by_sum(string* &names, int* &totals, int &members) {
+    int* temp = new int[members]; // копия сумм
+    for (int i = 0; i < members; i++) {
+        temp[i] = totals[i];
+    }
+    string* temp_names = new string[members]; // копия имен
+    for (int i = 0; i < members; i++) {
+        temp_names[i] = names[i];
+    }
+    
+    for (int i = 0; i < members; i++) {
+        for (int j = 0; j < members - 1; j++) {
+            if (temp[j] < temp[j + 1]) {
+                int temp_var = temp[j + 1];
+                temp[j + 1] = temp[j];
+                temp[j] = temp_var;
+                
+                string temp_name = temp_names[j + 1];
+                temp_names[j + 1] = temp_names[j];
+                temp_names[j] = temp_name;
+            }
+        }
+    }
+    for (int i = 0; i < members; i++) {
+        cout << temp_names[i] << ": " << temp[i] << ", ";
+    }
+    
+    delete[] temp;
+    delete[] temp_names;
+}
+
+void menu(string* &names, int** &scores, int* &totals, int &members, int &rounds) {
+    int choice;
+    cout << endl;
+    cout << "1. Ввести данные" << endl;
+    cout << "2. Показать таблицу" << endl;
+    cout << "3. Найти победителя" << endl;
+    cout << "4. Средний балл по раундам" << endl;
+    cout << "5. Отсортировать по сумме" << endl;
+    cout << "6. Выход" << endl;
+    cout << "Выбор: ";
+    cin >> choice;
+    cout << endl;
+    
+    if (cin.fail()) {clear_entry();} else {
+        switch (choice) {
+            case 1: enter_data(names, scores, totals, members, rounds); break;
+            case 2: if (names != nullptr) {show_table(names, scores, totals, members, rounds);} else {show_error();} break;
+            case 3: if (names != nullptr) {find_winner(names, totals, members);} else {show_error();} break;
+            case 4: if (names != nullptr) {average_score(names, scores, members, rounds);} else {show_error();} break;
+            case 5: if (names != nullptr) {sort_by_sum(names, totals, members);} else {show_error();} break;
+            case 6: 
+                cout << endl;
+                cout << "Выход завершен" << endl;
+                free_memory(names, scores, totals, members, rounds);
+                run = false;
+                break;
+        }
+    }
+}
+
+
+int main() {
+    string* names = nullptr; 
+    int** scores = nullptr; 
+    int* totals = nullptr; 
+    
+    int members, rounds;
+    
+    while (run) {
+        menu(names, scores, totals, members, rounds);
+    }
+
+    return 0;
+}
