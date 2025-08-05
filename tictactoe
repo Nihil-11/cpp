@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void display_fields(int fields[]) {
+void display_fields(char fields[]) { // вывод полей
     cout << endl;
     for (int i = 0; i < 9; i++) {
         if (i == 3 || i == 6) {
@@ -13,13 +13,7 @@ void display_fields(int fields[]) {
             cout << endl;
         }
 
-        if (fields[i] == 11) {
-            cout << "X";
-        } else if (fields[i] == 22) {
-            cout << "O";
-        } else {
-            cout << fields[i];
-        }
+        cout << fields[i];
 
         if (i != 2 && i != 5 && i != 8) {
             cout << " | ";
@@ -29,106 +23,75 @@ void display_fields(int fields[]) {
     cout << endl;
 }
 
-void enter_move(int fields[], string player) {
+void new_move(char fields[], char player) { // новый ход
     int field;
     bool not_entered = true;
 
     while (not_entered) {
         cout << player << " move: ";
         cin >> field;
-        if (cin.fail() || field < 1 || field > 9 || fields[field - 1] == 11 || fields[field - 1] == 22) {
+        // проверка на корректность ввода и не занято ли поле
+        if (cin.fail() || field < 1 || field > 9 || fields[field - 1] == 'X' || fields[field - 1] == 'O') {
             cout << endl << "Invalid input or field is occupied. Try again" << endl << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
         } else {
-            if (player == "X") {
-                fields[field - 1] = 11;
-                not_entered = false;
-            }
-            if (player == "O") {
-                fields[field - 1] = 22;
-                not_entered = false;
-            }
+            fields[field - 1] = player;
+            not_entered = false;
         }
     }
 }
 
-void new_move(int fields[], int move) {
-    int field;
-
-    if (move % 2 == 0) {
-        enter_move(fields, "X");
-    } if (move % 2 != 0) {
-        enter_move(fields, "O");
-    }
+void display_winner(char player) { // сообщение о победителе
+    cout << "-------------" << endl;
+    cout << "   " << player << " wins!" << endl;
+    cout << "-------------" << endl;
 }
 
-bool check_winner(int fields[], int move) {
-    string message;
+bool check_winner(char fields[], char player) {
     bool result = false;
 
-    if (move % 2 == 0) {
-        message = "X wins!";
-    } if (move % 2 != 0) {
-        message = "O wins!";
-    }
-
+    // проверка всех 8 возможных вариантов победы
     if (fields[0] == fields[1] && fields[1] == fields[2]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
     if (fields[3] == fields[4] && fields[4] == fields[5]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
     if (fields[6] == fields[7] && fields[7] == fields[8]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
 
     if (fields[0] == fields[3] && fields[3] == fields[6]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
     if (fields[1] == fields[4] && fields[4] == fields[7]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
     if (fields[2] == fields[5] && fields[5] == fields[8]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
 
     if (fields[0] == fields[4] && fields[4] == fields[8]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
     if (fields[2] == fields[4] && fields[4] == fields[6]) {
         display_fields(fields);
-        cout << "-------------" << endl;
-        cout << "   " << message << endl;
-        cout << "-------------" << endl;
+        display_winner(player);
         result = true;
     }
 
@@ -136,23 +99,30 @@ bool check_winner(int fields[], int move) {
 }
 
 int main() {
-    int fields[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-    int move = 0;
+    char fields[9] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    int move = 0; // четный ход - крестик, нечетный - нолик
+    char player; 
 
     cout << endl << "----- TIC TAC TOE -----" << endl;
 
     while (move < 8) {
-        display_fields(fields);
-        new_move(fields, move);
+        if (move % 2 == 0) { 
+            player = 'X';
+        } else {
+            player = 'O';
+        }
+
+        display_fields(fields); // выводит поля
+        new_move(fields, player); // запрос нового хода
         if (move > 3) {
-            if (check_winner(fields, move)) {
+            if (check_winner(fields, player)) { // проверка на победителя
                 break;
             } 
         }
-        move++;
+        move++; // след. ход если игра не завершена
     }
 
-    if (move == 8) {
+    if (move == 8) { // после 8 хода объявляется ничья
         display_fields(fields);
         cout << "-----------" << endl;
         cout << "   " << "Draw!" << endl;
