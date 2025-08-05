@@ -154,7 +154,9 @@ int main() {
 
     if (move == 8) {
         display_fields(fields);
-        cout <<"Draw!" << endl;
+        cout << "-----------" << endl;
+        cout << "   " << "Draw!" << endl;
+        cout << "-----------" << endl;
     }
 
     return 0;
