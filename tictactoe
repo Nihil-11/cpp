@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <limits>
 
 using namespace std;
 
@@ -28,19 +29,37 @@ void display_fields(int fields[]) {
     cout << endl;
 }
 
+void enter_move(int fields[], string player) {
+    int field;
+    bool not_entered = true;
+
+    while (not_entered) {
+        cout << player << " move: ";
+        cin >> field;
+        if (cin.fail() || field < 1 || field > 9 || fields[field - 1] == 11 || fields[field - 1] == 22) {
+            cout << endl << "Invalid input or field is occupied. Try again" << endl << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        } else {
+            if (player == "X") {
+                fields[field - 1] = 11;
+                not_entered = false;
+            }
+            if (player == "O") {
+                fields[field - 1] = 22;
+                not_entered = false;
+            }
+        }
+    }
+}
+
 void new_move(int fields[], int move) {
     int field;
 
     if (move % 2 == 0) {
-        cout << endl;
-        cout << "X move: ";
-        cin >> field;
-        fields[field - 1] = 11;
+        enter_move(fields, "X");
     } if (move % 2 != 0) {
-        cout << endl;
-        cout << "O move: ";
-        cin >> field;
-        fields[field - 1] = 22;
+        enter_move(fields, "O");
     }
 }
 
@@ -56,44 +75,60 @@ bool check_winner(int fields[], int move) {
 
     if (fields[0] == fields[1] && fields[1] == fields[2]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
     if (fields[3] == fields[4] && fields[4] == fields[5]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
     if (fields[6] == fields[7] && fields[7] == fields[8]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
 
     if (fields[0] == fields[3] && fields[3] == fields[6]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
     if (fields[1] == fields[4] && fields[4] == fields[7]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
     if (fields[2] == fields[5] && fields[5] == fields[8]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
 
     if (fields[0] == fields[4] && fields[4] == fields[8]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
     if (fields[2] == fields[4] && fields[4] == fields[6]) {
         display_fields(fields);
-        cout << message;
+        cout << "-------------" << endl;
+        cout << "   " << message << endl;
+        cout << "-------------" << endl;
         result = true;
     }
 
@@ -109,11 +144,12 @@ int main() {
     while (move < 8) {
         display_fields(fields);
         new_move(fields, move);
-        if (check_winner(fields, move)) {
-            break;
-        } else {
-            move++;
+        if (move > 3) {
+            if (check_winner(fields, move)) {
+                break;
+            } 
         }
+        move++;
     }
 
     if (move == 8) {
