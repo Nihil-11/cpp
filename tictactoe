@@ -45,7 +45,7 @@ void new_move(char fields[], char player) { // новый ход
 void display_winner(char player) { 
     cout << "-------------" << endl;
     cout << "   " << player << " wins!" << endl;
-    cout << "-------------" << endl;
+    cout << "-------------" << endl << endl;
 }
 
 bool check_winner(char fields[], char player) {
@@ -65,38 +65,72 @@ bool check_winner(char fields[], char player) {
     return false;
 }
 
+bool new_game() { // новая игра или выход
+    int choice;
+    bool not_entered = true;
+
+    while (not_entered) {
+        cout << "Enter 1 to start a new game" << endl;
+        cout << "Enter 2 to exit" << endl;
+        cout << "Choice: ";
+        cin >> choice;
+
+        if (!cin.fail() && choice == 1) {
+            not_entered = false;
+            return true;
+        } else if (!cin.fail() && choice == 2) {
+            not_entered = false;
+        } else {
+            cout << endl << "Invalid input. Try again" << endl << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        }
+    }
+
+    return false;
+}
+
 int main() {
-    char fields[9] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    char fields[9];
     int move = 0; // четный ход - крестик, нечетный - нолик
     char player; 
 
-    cout << endl << "----- TIC TAC TOE -----" << endl;
+    while (new_game()) {
+        for (int i = 0; i < 9; i++) { // перезаполнение массива перед новой игрой
+            fields[i] = '1' + i;
+        }
+        move = 0; // сброс счетчика ходов перед новой игрой
 
-    while (move < 9) {
-        if (move % 2 == 0) { 
-            player = 'X';
-        } else {
-            player = 'O';
+        cout << endl << "----- TIC TAC TOE -----" << endl;
+
+        while (move < 9) {
+            if (move % 2 == 0) { 
+                player = 'X';
+            } else {
+                player = 'O';
+            }
+
+            display_fields(fields); // выводит поля
+            new_move(fields, player); // запрос нового хода
+            if (move > 3) {
+                if (check_winner(fields, player)) { // проверка на победителя
+                    display_fields(fields);
+                    display_winner(player);
+                    break;
+                } 
+            }
+            move++; // след. ход если игра не завершена
         }
 
-        display_fields(fields); // выводит поля
-        new_move(fields, player); // запрос нового хода
-        if (move > 3) {
-            if (check_winner(fields, player)) { // проверка на победителя
-                display_fields(fields);
-                display_winner(player);
-                break;
-            } 
+        if (move == 9) { // после 8 хода объявляется ничья
+            display_fields(fields);
+            cout << "-----------" << endl;
+            cout << "   " << "Draw!" << endl;
+            cout << "-----------" << endl << endl;
         }
-        move++; // след. ход если игра не завершена
-    }
-
-    if (move == 9) { // после 8 хода объявляется ничья
-        display_fields(fields);
-        cout << "-----------" << endl;
-        cout << "   " << "Draw!" << endl;
-        cout << "-----------" << endl;
-    }
-
+    } 
+    
+    cout << endl << "Exit complete" << endl << endl;
+    
     return 0;
 }
