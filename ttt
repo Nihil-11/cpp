@@ -25,8 +25,8 @@ void display_fields(char fields[]) { // вывод полей
     cout << endl;
 }
 
-void bot_move(char fields[], char bot) { // ход бота (случайное не занятое поле)
-    int rand_bot_move = 1;
+void bot_move(char fields[], char bot) {
+    int rand_bot_move = 1 + (rand() % 9);
     while (fields[rand_bot_move - 1] == 'X' || fields[rand_bot_move - 1] == 'O') {
         rand_bot_move = 1 + (rand() % 9);
     }
@@ -34,7 +34,7 @@ void bot_move(char fields[], char bot) { // ход бота (случайное 
     fields[rand_bot_move - 1] = bot;
 }
 
-void players_move(char fields[], char player) { // ход игрока
+void players_move(char fields[], char player) { // новый ход
     int field;
     while (true) {
         cout << player << " move: ";
@@ -95,23 +95,21 @@ bool new_game(char* player, char* bot) { // новая игра или выхо�
         }
     }
 
-    while (true) {
+    while (true) { // игрок выбирает, за кого играть
         cout << endl << "Play as: " << endl;
         cout << "X - enter 1" << endl;
         cout << "O - enter 2" << endl;
         cout << "Choice: ";
         cin >> play_as;
 
-        if (!cin.fail() && play_as == 1) {
+        if (!cin.fail() && play_as == 1) { // игрок выбрал X, значит "бот" играет за O
             *player = 'X';
             *bot = 'O';
             return true;
-            break;
-        } else if (!cin.fail() && play_as == 2) {
+        } else if (!cin.fail() && play_as == 2) { // игрок выбрал O, значит "бот" играет за X
             *player = 'O';
             *bot = 'X';
             return true;
-            break;
         } else {
             cout << endl << "Invalid input. Try again" << endl << endl;
             cin.clear();
@@ -126,6 +124,7 @@ int main() {
     char fields[9];
     int move = 0; // четный ход - крестик, нечетный - нолик
     char player, bot; // для определения, кем играет пользователь и бот
+    srand(time(NULL));
 
     while (new_game(&player, &bot)) {
         for (int i = 0; i < 9; i++) { // перезаполнение массива перед новой игрой
@@ -136,8 +135,8 @@ int main() {
 
         cout << endl << "----- TIC TAC TOE -----" << endl;
 
-        while (move < 9) {
-            if (move % 2 == 0) { 
+        while (move < 9) { // цикл, в которой проходит партия
+            if (move % 2 == 0) { // четный ход - ходит X
                 if (player == 'X') {
                     display_fields(fields); // выводит поля
                     players_move(fields, player);
@@ -145,7 +144,7 @@ int main() {
                     bot_move(fields, bot); 
                 }
             } 
-            if (move % 2 != 0) {
+            if (move % 2 != 0) { // нечетный ход - ходит O
                 if (player == 'O') {
                     display_fields(fields); // выводит поля
                     players_move(fields, player);
