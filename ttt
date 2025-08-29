@@ -1,0 +1,183 @@
+#include <iostream>
+#include <string>
+#include <limits>
+#include <ctime>
+#include <cstdlib>
+
+using namespace std;
+
+void display_fields(char fields[]) { // вывод полей
+    cout << endl;
+    for (int i = 0; i < 9; i++) {
+        if (i == 3 || i == 6) {
+            cout << endl;
+            cout << "----------";
+            cout << endl;
+        }
+
+        cout << fields[i];
+
+        if (i != 2 && i != 5 && i != 8) {
+            cout << " | ";
+        } 
+    }
+    cout << endl;
+    cout << endl;
+}
+
+void bot_move(char fields[], char bot) {
+    int rand_bot_move = 1;
+    while (fields[rand_bot_move - 1] == 'X' || fields[rand_bot_move - 1] == 'O') {
+        rand_bot_move = 1 + (rand() % 9);
+    }
+
+    fields[rand_bot_move - 1] = bot;
+}
+
+void players_move(char fields[], char player) { // новый ход
+    int field;
+    while (true) {
+        cout << player << " move: ";
+        cin >> field;
+        // проверка на корректность ввода и не занято ли поле
+        if (cin.fail() || field < 1 || field > 9 || fields[field - 1] == 'X' || fields[field - 1] == 'O') {
+            cout << endl << "Invalid input or field is occupied. Try again" << endl << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        } else {
+            fields[field - 1] = player;
+            break;
+        }
+    }
+}
+
+bool check_winner(char fields[], char current_move) {
+    // варианты победы
+    int wins[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
+
+    for (int i = 0; i < 8; i++) {
+        int a = wins[i][0]; // 0 элемент в победной комбинации
+        int b = wins[i][1]; // 1 элемент в победной комбинации
+        int c = wins[i][2]; // 2 элемент в победной комбинации
+
+        if (fields[a] == current_move && fields[b] == current_move && fields[c] == current_move) {
+            display_fields(fields);
+
+            cout << "-------------" << endl;
+            cout << "   " << current_move << " wins!" << endl;
+            cout << "-------------" << endl << endl;
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool new_game(char* player, char* bot) { // новая игра или выход
+    int choice;
+    int play_as;
+
+    while (true) {
+        cout << "Enter 1 to start a new game" << endl;
+        cout << "Enter 2 to exit" << endl;
+        cout << "Choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            break;
+        } else if (choice == 2) {
+            return false;
+        } else {
+            cout << endl << "Invalid input. Try again" << endl << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        }
+    }
+
+    while (true) {
+        cout << "Play as: " << endl;
+        cout << "X - enter 1" << endl;
+        cout << "O - enter 2" << endl;
+        cout << "Choice: ";
+        cin >> play_as;
+
+        if (!cin.fail() && play_as == 1) {
+            *player = 'X';
+            *bot = 'O';
+            return true;
+            break;
+        } else if (!cin.fail() && play_as == 2) {
+            *player = 'O';
+            *bot = 'X';
+            return true;
+            break;
+        } else {
+            cout << endl << "Invalid input. Try again" << endl << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    char fields[9];
+    int move = 0; // четный ход - крестик, нечетный - нолик
+    char player, bot; // для определения, кем играет пользователь и бот
+
+    while (new_game(&player, &bot)) {
+        for (int i = 0; i < 9; i++) { // перезаполнение массива перед новой игрой
+            fields[i] = '1' + i;
+        }
+
+        move = 0; // сброс счетчика ходов перед новой игрой
+
+        cout << endl << "----- TIC TAC TOE -----" << endl;
+
+        while (move < 9) {
+            if (move % 2 == 0) { 
+                if (player == 'X') {
+                    display_fields(fields); // выводит поля
+                    players_move(fields, player);
+                } else {
+                    bot_move(fields, bot); 
+                }
+            } 
+            if (move % 2 != 0) {
+                if (player == 'O') {
+                    display_fields(fields); // выводит поля
+                    players_move(fields, player);
+                } else {
+                    bot_move(fields, bot);
+                }
+            }
+            
+            if (move > 3) { // проверка на победителя
+                if (move % 2 == 0) {
+                    if (check_winner(fields, 'X')) { 
+                        break;
+                    }
+                } else {
+                    if (check_winner(fields, 'O')) { 
+                        break;
+                    }
+                }
+            }
+
+            move++; // след. ход если игра не завершена
+        } 
+
+        if (move == 9) { // после 8 хода объявляется ничья
+            display_fields(fields);
+            cout << "-----------" << endl;
+            cout << "   " << "Draw!" << endl;
+            cout << "-----------" << endl << endl;
+        }
+    } 
+    
+    cout << endl << "Exit complete" << endl << endl;
+    
+    return 0;
+}
