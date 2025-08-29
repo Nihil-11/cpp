@@ -96,7 +96,7 @@ bool new_game(char* player, char* bot) { // новая игра или выхо�
     }
 
     while (true) {
-        cout << "Play as: " << endl;
+        cout << endl << "Play as: " << endl;
         cout << "X - enter 1" << endl;
         cout << "O - enter 2" << endl;
         cout << "Choice: ";
