@@ -25,7 +25,7 @@ void display_fields(char fields[]) { // вывод полей
     cout << endl;
 }
 
-void bot_move(char fields[], char bot) {
+void bot_move(char fields[], char bot) { // ход бота (случайное не занятое поле)
     int rand_bot_move = 1;
     while (fields[rand_bot_move - 1] == 'X' || fields[rand_bot_move - 1] == 'O') {
         rand_bot_move = 1 + (rand() % 9);
@@ -34,7 +34,7 @@ void bot_move(char fields[], char bot) {
     fields[rand_bot_move - 1] = bot;
 }
 
-void players_move(char fields[], char player) { // новый ход
+void players_move(char fields[], char player) { // ход игрока
     int field;
     while (true) {
         cout << player << " move: ";
